@@ -1,0 +1,6 @@
+apollonator:
+  api_key: "CHANGEME"
+  organization: "CHANGEME"
+  email: true
+  phone_number: true
+  title: true
