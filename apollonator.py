@@ -68,9 +68,9 @@ class Apollonator():
         with open(names) as f:
             lines = f.readlines()
             for name in lines:
-                name = name.replace(',', ' ')
-                first_name = name.split()[1]
-                last_name = name.split()[0]
+                #name = name.replace(',', ' ')
+                first_name = name.split()[0]
+                last_name = name.split()[1]
                 f_name = first_name + " " + last_name + "\n"
                 fullnames = open(file, "a")
                 fullnames.write(f_name)
