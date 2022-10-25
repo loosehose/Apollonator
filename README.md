@@ -29,12 +29,12 @@ pip3 install -r requirements
 ### Basic 
 
 ```
-python3 apollonator -c config.yml -n users.txt
+python3 apollonator.py -c config.yml -n users.txt
 ```
 
 ### Create Excel Sheet
 
 ```
-python3 apollonator -c config.yml -n users.txt -e
+python3 apollonator.py -c config.yml -n users.txt -e
 ```
 
