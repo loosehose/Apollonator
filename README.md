@@ -4,6 +4,9 @@
 
 Apollonator is a script designed to extract information from Apollo.io on target organizations, given a list of names. Apollonator relies on a configuration file (config.yml) to parse the API key, organization name, and boolean values to determine what information will be gathered from the Apollo JSON response. 
 
+Apollo's API key can be found here: https://developer.apollo.io/keys/
+I created a master key to avoid any issues; however, that may be overkill.
+
 The name file should be in a JOHN SMITH format. Otherwise, the script will break. 
 
 ### Disclaimer
