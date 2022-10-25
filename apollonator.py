@@ -61,7 +61,6 @@ class Apollonator():
         return title["person"]["title"]
 
     def get_names_and_store_in_txt(self, names):
-        # reset fullnames.txt
         file = time.strftime("%Y%m%d%H%M")+"_names.txt"
         fullnames = open(file, "w")
 
@@ -74,6 +73,7 @@ class Apollonator():
                 f_name = first_name + " " + last_name + "\n"
                 fullnames = open(file, "a")
                 fullnames.write(f_name)
+                
     def convert_to_excel(self, first_name, last_name, org, email, phone, title):
         file = "appolonator"+org+".xlsx"
         if email != None:
@@ -86,14 +86,14 @@ class Apollonator():
         apolloDf = pd.concat([apolloDf, pd.DataFrame.from_records([{'First Name': first_name, "Last Name": last_name, "Organization": org, 'Email': email, 'Domain': domain, 'Phone Number': phone, 'Title': title}])])
 
         if os.path.isfile(file):  # if file already exists append to existing file
-            workbook = openpyxl.load_workbook(file)  # load workbook if already exists
-            sheet = workbook['Employee Info']  # declare the active sheet 
+            workbook = openpyxl.load_workbook(file)  
+            sheet = workbook['Employee Info']  
 
             # append the dataframe results to the current excel file
             for row in dataframe_to_rows(apolloDf, header = False, index = False):
                 sheet.append(row)
-            workbook.save(file)  # save workbook
-            workbook.close()  # close workbook
+            workbook.save(file)  
+            workbook.close()  
         else:  # create the excel file if doesn't already exist
             with pd.ExcelWriter(path = file, engine = 'openpyxl') as writer:
                 apolloDf.to_excel(writer, index = False, sheet_name = 'Employee Info')
