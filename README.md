@@ -15,7 +15,7 @@ The name file should be in a JOHN SMITH format. Otherwise, the script will break
 
 ### Disclaimer
 
-During the production of this script, I used the 'Professional' subscription becauses I had a large list of users. Depending on your volume, you may be able to get away with the 'Basic' plan. 
+During the production of this script, I used the 'Professional' subscription becauses I had a large list of users. Depending on your volume, you may be able to get away with the 'Basic' plan. This script is also not bug-proof. This was created for a red team engagement and quickly thrown together.
 
 ## Quick Start
 
