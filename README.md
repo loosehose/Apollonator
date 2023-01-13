@@ -1,7 +1,7 @@
 # Apollonator
 ## Description
 
-Apollonator is a script designed to extract information from Apollo.io on target organizations, given a list of names. Apollonator relies on a configuration file (config.yml) to parse the API key, organization name, and boolean values to determine what information will be gathered from the Apollo JSON response. Apollonator waits 18 second between each request to avoid usage limitations per minute and hour.
+Apollonator is a script that extracts information from Apollo.io for target organizations using a list of names. It utilizes a configuration file (config.yml) to input the API key, organization name, and boolean values for specific information to gather from the Apollo JSON response. To avoid usage limitations, Apollonator implements a 18 second delay between each request.
 
 ### API Information
 I created a master key to avoid any issues; however, that may be overkill.
