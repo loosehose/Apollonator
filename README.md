@@ -2,7 +2,7 @@
   <img src="https://user-images.githubusercontent.com/75705022/212420146-b2ccb43b-f803-49a9-a362-50ba4e789048.png" />
 </p>
 
-Apollonator is a Python utility that sends requests to the Apollo.io API to retrieve person's email and title. It reads the person's name and organization from a text file and returns the extracted email and title.
+Apollonator is a Python utility that sends requests to the Apollo.io API to retrieve person's email and title. It reads the person's name and organization from a text file and returns the extracted email and title. Let's say you scraped a list of names from LinkedIn and there are users such as 'LinkedIn Member' within your list. This script is set up to ignore that exact string of words. 
 
 The retrieved information can optionally be saved into an Excel file for further use.
 
@@ -33,6 +33,9 @@ Each request to the Apollo.io API takes about 18 seconds to complete, so the est
 
 Output
 The program prints out the first name, last name, and email (if requested) of each person in the provided names file. If the `-e` option is used, the information is saved in an Excel file named "apollonator{organization}.xlsx", where "{organization}" is replaced with the name of your organization. The Excel file has a sheet named "Employee Info" with columns for First Name, Last Name, Organization, Email, Domain (extracted from the email), and Title (if requested). If the Excel file already exists, the new information is appended to it.
+
+## Caveats
+Let's say you have a user named Jane Smith Johnson. While this name may be within the Apollo database, it is wise to create three names from this: Jane Smith Johnson, Jane Smith, and Jane Johnson to ensure you get a match. This edge case, as well as a few others, will be fixed in future updates, *hopefully*. 
 
 ## Error Handling
 If the program encounters a JSONDecodeError, it assumes that the daily API limit has been reached and exits.
