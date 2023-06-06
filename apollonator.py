@@ -32,7 +32,7 @@ class Apollonator():
     def yaml_parser(self, config):
         with open(config, "r") as stream:
             config = yaml.safe_load(stream)["apollonator"]
-            return [config["api_key"], config["organization"], config["email"], config["phone_number"], config["title"]]
+            return [config["api_key"], config["organization"], config["email"], config["title"]]
 
     def apollo_requester(self, api_key, organization_name, first_name, last_name):
         url = "https://api.apollo.io/v1/people/match"
@@ -46,15 +46,6 @@ class Apollonator():
         email = json.loads(json_file)
 
         return email["person"]["email"]
-
-    def extract_phone_from_json(self, json_file):
-        json_loader = json.loads(json_file)
-
-        try:
-            tele = json_loader["person"]['phone_numbers'][0]
-            return tele["sanitized_number"]
-        except KeyError:
-            return
 
     def extract_title_from_json(self, json_file):
         title = json.loads(json_file)
@@ -74,7 +65,7 @@ class Apollonator():
                 fullnames = open(file, "a")
                 fullnames.write(f_name)
                 
-    def convert_to_excel(self, first_name, last_name, org, email, phone, title):
+    def convert_to_excel(self, first_name, last_name, org, email, title):
         file = "appolonator"+org+".xlsx"
         if email != None:
             domain = email[email.index('@') + 1 : ]
@@ -83,7 +74,7 @@ class Apollonator():
             domain = ""
 
         apolloDf = pd.DataFrame()
-        apolloDf = pd.concat([apolloDf, pd.DataFrame.from_records([{'First Name': first_name, "Last Name": last_name, "Organization": org, 'Email': email, 'Domain': domain, 'Phone Number': phone, 'Title': title}])])
+        apolloDf = pd.concat([apolloDf, pd.DataFrame.from_records([{'First Name': first_name, "Last Name": last_name, "Organization": org, 'Email': email, 'Domain': domain, 'Title': title}])])
 
         if os.path.isfile(file):  # if file already exists append to existing file
             workbook = openpyxl.load_workbook(file)  
@@ -100,30 +91,40 @@ class Apollonator():
 
     def run(self, args):
         config_check = Apollonator().yaml_parser(args.config)
-        api_key, org, boolEmail, boolPhone, boolTitle = config_check[0], config_check[1], config_check[2], config_check[3], config_check[4]
+        api_key, org, boolEmail, boolTitle  = config_check[0], config_check[1], config_check[2], config_check[3]
 
         Apollonator().get_names_and_store_in_txt(args.name)
         file = time.strftime("%Y%m%d%H%M")+"_names.txt"
         with open(file) as f:
             lines = f.readlines()
+            est_time = len(lines) * 18 / 60  # estimated completion time in minutes
+            print(f"Estimated completion time: {est_time} minutes.")
             for name in lines:
                 first_name = name.split()[0]
                 last_name = name.split()[1]
+
+                # Skip LinkedIn Member
+                if first_name.lower() == 'linkedin' and last_name.lower() == 'member':
+                    continue
+
                 requester = Apollonator().apollo_requester(api_key, org, first_name, last_name)
                 try:
-                    if boolEmail == True: email = Apollonator().extract_email_from_json(requester)
-                    if boolPhone == True: phone = Apollonator().extract_phone_from_json(requester)
-                    if boolTitle == True: title = Apollonator().extract_title_from_json(requester)
-                    print(first_name, last_name, org, email, phone, title)
+                    if boolEmail == True: 
+                        email = Apollonator().extract_email_from_json(requester)
+                        if email is None or email.lower() == 'none':
+                            continue
+
+                    if boolTitle == True: 
+                        title = Apollonator().extract_title_from_json(requester)
+                    
+                    print(first_name, last_name, email)
                     if args.excel:
-                        Apollonator().convert_to_excel(first_name, last_name, org, email, phone, title)
+                        Apollonator().convert_to_excel(first_name, last_name, org, email, title)
                     
                 except JSONDecodeError as e:
                     print("API Daily Limit Reached")
                     exit(1)
-                
-                
-
+            
 if __name__ == "__main__":
     a = Apollonator()
     args = a.validate_args()
