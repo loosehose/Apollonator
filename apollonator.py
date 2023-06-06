@@ -50,20 +50,6 @@ class Apollonator():
     def extract_title_from_json(self, json_file):
         title = json.loads(json_file)
         return title["person"]["title"]
-
-    def get_names_and_store_in_txt(self, names):
-        file = time.strftime("%Y%m%d%H%M")+"_names.txt"
-        fullnames = open(file, "w")
-
-        with open(names) as f:
-            lines = f.readlines()
-            for name in lines:
-                #name = name.replace(',', ' ')
-                first_name = name.split()[0]
-                last_name = name.split()[1]
-                f_name = first_name + " " + last_name + "\n"
-                fullnames = open(file, "a")
-                fullnames.write(f_name)
                 
     def convert_to_excel(self, first_name, last_name, org, email, title):
         file = "appolonator"+org+".xlsx"
@@ -93,9 +79,7 @@ class Apollonator():
         config_check = Apollonator().yaml_parser(args.config)
         api_key, org, boolEmail, boolTitle  = config_check[0], config_check[1], config_check[2], config_check[3]
 
-        Apollonator().get_names_and_store_in_txt(args.name)
-        file = time.strftime("%Y%m%d%H%M")+"_names.txt"
-        with open(file) as f:
+        with open(args.name) as f:
             lines = f.readlines()
             est_time = len(lines) * 18 / 60  # estimated completion time in minutes
             print(f"Estimated completion time: {est_time} minutes.")
@@ -125,6 +109,7 @@ class Apollonator():
                     print("API Daily Limit Reached")
                     exit(1)
             
+
 if __name__ == "__main__":
     a = Apollonator()
     args = a.validate_args()
