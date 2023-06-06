@@ -31,7 +31,7 @@ The `-n` or `--names` option specifies the text file that contains the list of n
 If you want the results saved in an Excel file, add the `-e` or `--excel option`.
 Each request to the Apollo.io API takes about 18 seconds to complete, so the estimated completion time for all names in the file is output at the start of the run.
 
-Output
+## Output
 The program prints out the first name, last name, and email (if requested) of each person in the provided names file. If the `-e` option is used, the information is saved in an Excel file named "apollonator{organization}.xlsx", where "{organization}" is replaced with the name of your organization. The Excel file has a sheet named "Employee Info" with columns for First Name, Last Name, Organization, Email, Domain (extracted from the email), and Title (if requested). If the Excel file already exists, the new information is appended to it.
 
 ## Caveats
