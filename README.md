@@ -29,7 +29,7 @@ python apollonator.py -c config.yml -n names.txt
 The `-c` or `--config` option specifies the configuration file.
 The `-n` or `--names` option specifies the text file that contains the list of names to be looked up. Each line of the file should contain a first and last name separated by a space.
 If you want the results saved in an Excel file, add the `-e` or `--excel option`.
-The `-s' or `--sleep` option specifies the delay between each request. 18 is the default.
+The `-s` or `--sleep` option specifies the delay between each request. 18 is the default.
 ## Output
 The program prints out the first name, last name, and email (if requested) of each person in the provided names file. If the `-e` option is used, the information is saved in an Excel file named "apollonator{organization}.xlsx", where "{organization}" is replaced with the name of your organization. The Excel file has a sheet named "Employee Info" with columns for First Name, Last Name, Organization, Email, Domain (extracted from the email), and Title (if requested). If the Excel file already exists, the new information is appended to it.
 
