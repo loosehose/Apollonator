@@ -18,6 +18,8 @@ class Apollonator():
                             help="Save the results to an excel file.")
         parser.add_argument("-n", "--names", dest="name", default=None,
                             help="Input a list of names.")
+        parser.add_argument("-s", "--sleep", dest="sleep", default=18, type=int,
+                        help="Specify sleep delay in seconds. Default is 18.")
         args = parser.parse_args()
 
         if not (args.config):
@@ -34,12 +36,17 @@ class Apollonator():
             config = yaml.safe_load(stream)["apollonator"]
             return [config["api_key"], config["organization"], config["email"], config["title"]]
 
-    def apollo_requester(self, api_key, organization_name, first_name, last_name):
+    def apollo_requester(self, api_key, organization_name, first_name, last_name, delay):
         url = "https://api.apollo.io/v1/people/match"
-        payload = { "api_key": api_key, "first_name": first_name, "last_name": last_name, "organization_name": organization_name, }
+        payload = { 
+            "api_key": api_key, 
+            "first_name": first_name, 
+            "last_name": last_name, 
+            "organization_name": organization_name, 
+        }
 
         r = requests.post(url, json=payload)
-        time.sleep(18)
+        time.sleep(delay)
         return r.text
 
     def extract_email_from_json(self, json_file):
@@ -76,7 +83,7 @@ class Apollonator():
                 apolloDf.to_excel(writer, index = False, sheet_name = 'Employee Info')
 
     def run(self, args):
-        config_check = Apollonator().yaml_parser(args.config)
+        config_check = self.yaml_parser(args.config)
         api_key, org, boolEmail, boolTitle  = config_check[0], config_check[1], config_check[2], config_check[3]
 
         with open(args.name) as f:
@@ -91,15 +98,15 @@ class Apollonator():
                 if first_name.lower() == 'linkedin' and last_name.lower() == 'member':
                     continue
 
-                requester = Apollonator().apollo_requester(api_key, org, first_name, last_name)
+                requester = self.apollo_requester(api_key, org, first_name, last_name, args.sleep)
                 try:
                     if boolEmail == True: 
-                        email = Apollonator().extract_email_from_json(requester)
+                        email = self.extract_email_from_json(requester)
                         if email is None or email.lower() == 'none':
                             continue
 
                     if boolTitle == True: 
-                        title = Apollonator().extract_title_from_json(requester)
+                        title = self.extract_title_from_json(requester)
                     
                     print(first_name, last_name, email)
                     if args.excel:
