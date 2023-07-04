@@ -1,4 +1,4 @@
-package apollonator
+package requester
 
 import (
 	"bytes"
