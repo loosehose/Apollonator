@@ -1,4 +1,4 @@
-package namesfile
+package pkg
 
 import (
 	"io/ioutil"
