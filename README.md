@@ -56,7 +56,7 @@ You can run the program with the following command:
 The `-c` or `--config` option specifies the configuration file.
 The `-n` or `--names` option specifies the text file that contains the list of names to be looked up. Each line of the file should contain a first and last name separated by a space.
 If you want the results saved in an Excel file, add the `-e` or `--excel option`.
-The `-s` or `--sleep` option specifies the delay between each request. 18 is the default.
+The `-s` or `--sleep` option specifies the delay between each request. 18 is the default. You probably shouldn't change this number or Apollo will get mad at u!!1!1
 
 ## Output
 
