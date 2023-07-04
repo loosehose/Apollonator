@@ -2,23 +2,20 @@
   <img src="https://user-images.githubusercontent.com/75705022/250726305-e20cb22e-9822-42e0-bb37-b7e73651b2be.png" />
 </p>
 
-Apollonator is a Golang utility that sends requests to the Apollo.io API to retrieve person's email and title. It reads the person's name and organization from a text file and returns the extracted email and title. The purpose of this tool is to enumerate target email addresses without having to touch their infrastructure. 
+Apollonator is a Golang utility that uses the Apollo.io API to retrieve a person's email and job title. By reading in a list of names and an organization from a text file, it is able to return corresponding emails and job titles. This utility enables the enumeration of target email addresses without interacting with the target's infrastructure.
 
-The retrieved information can optionally be saved into an Excel file for further use.
+An optional feature allows the retrieved information to be saved into an Excel file for later use.
 
 ## Installation
-
-```
+Clone the repository, navigate to the 'Apollonator' directory, and build the program:
+```bash
 git clone https://github.com/loosehose/apollonator.git
 cd Apollonator
 go build
 ```
 
 ## Configuration
-
-Before running the program, you need to configure your [apollo.io API key](https://developer.apollo.io/keys/) and the organization name in the config.yml file. The organization name can quickly be found by searching for it using the Apollo website searching engine.
-
-*Note: sometimes you really need to use that searching mechanic on Apollo because the organization name may be slightly different than anticipated.*
+Before running the program, acquire your [apollo.io API key](https://developer.apollo.io/keys/) and specify your organization name in the config.yml file.
 
 ```yaml
 apollonator:
@@ -27,8 +24,8 @@ apollonator:
   email: true
   title: true
 ```
-
-Replace "YOUR_API_KEY" with your Apollo.io API key and "YOUR_ORGANIZATION_NAME" with your organization name. Set the email and title fields to true or false depending on whether you want to extract email or title respectively. Apollo can also give you phone numbers. Originally, I added this; however, it usually just returns the company phone number... which is kinda useless.
+*Note: sometimes you really need to use that searching mechanic on Apollo because the organization name may be slightly different than anticipated.*
+Replace "YOUR_API_KEY" with your Apollo.io API key and "YOUR_ORGANIZATION_NAME" with your organization's exact name. Set the email and title fields to true or false based on your requirements.
 
 ## Usage
 ```
@@ -83,9 +80,11 @@ The `-s` or `--sleep` option specifies the delay between each request. 18 is the
 
 ## Output
 
-The program prints out the first name, last name, and email (if requested) of each person in the provided names file. If the `-e` option is used, the information is saved in an Excel file named "apollonator_{organization}.xlsx", where "{organization}" is replaced with the name of your organization. The Excel file has a sheet named "Employee Info" with columns for First Name, Last Name, Organization, Email, Domain (extracted from the email), and Title (if requested). If the Excel file already exists, the new information is appended to it. One neat thing about the excel file is it will automatically pick the domain name out. This makes it easier to sort out different domain names the company may be using and filter the false positives out.
+The utility prints the first name, last name, and requested email of each person in the provided names file. If the -e option is used, this data is saved into an Excel file named "apollonator_{organization}.xlsx", where "{organization}" is replaced with the name of your organization. There is regex in place for edge cases for organizations such as O'Reilly.
 
-If you want to copy the output without the logging, simply change line 249 (and rebuild):
+The Excel file contains a sheet named "Employee Info" with columns for First Name, Last Name, Organization, Email, Domain (extracted from the email), and Title (if requested). If the file already exists, new data is appended.
+
+If you want to copy the output without the logging, simply change the following line (and rebuild):
 
 ```go
 // current
