@@ -32,19 +32,42 @@ Replace "YOUR_API_KEY" with your Apollo.io API key and "YOUR_ORGANIZATION_NAME" 
 
 ## Usage
 ```
-./apollonator -h                                                                       
+./apollonator
+                  
+                   =@@#                 
+                  +@@@@%.               
+                 *@@@@@@@:   .....      
+                #@@@@@@@@@-  :---       
+              .%@@@@@@@@@@@=  ::        
+             :@@@@@@-.%@@@@@*           
+            -@@@@@@:   *@@@@@#          
+           =@@@@@%.  -  +@@@@@#         
+          *@@@@@#  .#@*  =@@@@@%:       
+         #@@@@@*  .%@@@%. :@@@@@@-      
+       .%@@@@@=  :@@@@@@:  .%@@@@@=     
+      .%@@@@@-  -@@@@@@:     #@@@@@+    
+     -@@@@@@:  =@@@@@%.       #@@@@@#   
+    =@@@@@%.  +@@@@@#          *@@@@@%. 
+   +@@@@@@+=*@@@@@@*            =@@@@@%.
+  *@@@@@@@@@@@@@@@+              -@@@@@%
+ #@@@@@@@@@@@@@%+.                :@@@@% (pollonator)
 
-        Holy OSINT, Apollonator! 
+
         author: github.com/loosehose
 
-Usage of ./apollonator:
-  -c string
-        Import the config.yml file with updated information.
-  -e    Save the results to an excel file.
-  -n string
-        Input a list of names.
-  -s int
-        Specify sleep delay in seconds. (default 18)
+[-c|--config] is required
+usage: apollonator [-h|--help] -c|--config "<value>" [-e|--excel] [-n|--names
+                   "<value>"] [-s|--sleep <integer>]
+
+                   
+
+Arguments:
+
+  -h  --help    Print help information
+  -c  --config  Import the config.yml file with updated information.
+  -e  --excel   Save the results to an excel file.
+  -n  --names   Input a list of names.
+  -s  --sleep   Specify sleep delay in seconds.. Default: 18
 ```
 
 You can run the program with the following command:
