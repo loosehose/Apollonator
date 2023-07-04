@@ -60,7 +60,7 @@ The `-s` or `--sleep` option specifies the delay between each request. 18 is the
 
 ## Output
 
-The program prints out the first name, last name, and email (if requested) of each person in the provided names file. If the `-e` option is used, the information is saved in an Excel file named "apollonator{organization}.xlsx", where "{organization}" is replaced with the name of your organization. The Excel file has a sheet named "Employee Info" with columns for First Name, Last Name, Organization, Email, Domain (extracted from the email), and Title (if requested). If the Excel file already exists, the new information is appended to it.
+The program prints out the first name, last name, and email (if requested) of each person in the provided names file. If the `-e` option is used, the information is saved in an Excel file named "apollonator_{organization}.xlsx", where "{organization}" is replaced with the name of your organization. The Excel file has a sheet named "Employee Info" with columns for First Name, Last Name, Organization, Email, Domain (extracted from the email), and Title (if requested). If the Excel file already exists, the new information is appended to it. One neat thing about the excel file is it will automatically pick the domain name out. This makes it easier to sort out different domain names the company may be using and filter the false positives out.
 
 If you want to copy the output without the logging, simply change line 249 (and rebuild):
 
