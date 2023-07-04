@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -151,7 +152,10 @@ func SaveToExcel(personData []PersonData, organization string) error {
 		row.AddCell().Value = data.Title
 	}
 
-	outputFile := fmt.Sprintf("apollonator_%s.xlsx", strings.ToLower(strings.ReplaceAll(organization, " ", "_")))
+	// Using regex for edge cases such as O'Reilly
+	re := regexp.MustCompile("[^a-zA-Z0-9_]+")
+	safeOrganizationName := re.ReplaceAllString(organization, "")
+	outputFile := fmt.Sprintf("apollonator_%s.xlsx", strings.ToLower(safeOrganizationName))
 
 	err := file.Save(outputFile)
 	if err != nil {
@@ -190,8 +194,7 @@ func main() {
     =@@@@@%.  +@@@@@#          *@@@@@%. 
    +@@@@@@+=*@@@@@@*            =@@@@@%.
   *@@@@@@@@@@@@@@@+              -@@@@@%
- #@@@@@@@@@@@@@%+.                :@@@@% (pollonator)
-
+ #@@@@@@@@@@@@@%+.                :@@@@% (pollonator) (v1.0.1)
 
 	author: github.com/loosehose
 	`)
@@ -203,7 +206,7 @@ func main() {
 
 	configFile := parser.String("c", "config", &argparse.Options{Required: true, Help: "Import the config.yml file with updated information."})
 	excel := parser.Flag("e", "excel", &argparse.Options{Help: "Save the results to an excel file."})
-	namesFile := parser.String("n", "names", &argparse.Options{Help: "Input a list of names."})
+	namesFile := parser.String("n", "names", &argparse.Options{Required: true, Help: "Input a list of names."})
 	sleep := parser.Int("s", "sleep", &argparse.Options{Default: defaultSleepDelay, Help: "Specify sleep delay in seconds."})
 
 	err := parser.Parse(os.Args)
