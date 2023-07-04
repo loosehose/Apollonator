@@ -20,7 +20,7 @@ Before running the program, you need to configure your [apollo.io API key](https
 
 *Note: sometimes you really need to use that searching mechanic on Apollo because the organization name may be slightly different than anticipated.*
 
-```
+```yaml
 apollonator:
   api_key: "YOUR_API_KEY"
   organization: "YOUR_ORGANIZATION_NAME"
