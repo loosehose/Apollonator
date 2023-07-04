@@ -10,10 +10,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"github.com/loosehose/apollonator/pkg/config"
-	"github.com/loosehose/apollonator/pkg/excel"
-	"github.com/loosehose/apollonator/pkg/file"
-	"github.com/loosehose/apollonator/pkg/requester"
+	"github.com/loosehose/apollonator/pkg"
 )
 
 const defaultSleepDelay = 18
