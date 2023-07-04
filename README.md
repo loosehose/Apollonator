@@ -100,7 +100,3 @@ fmt.Printf("%s %s %s", firstName, lastName, response.Person.Email)
 ## Caveats
 
 Let's say you have a user named Jane Smith Johnson. While this name may be within the Apollo database, it is wise to create three names from this: Jane Smith Johnson, Jane Smith, and Jane Johnson to ensure you get a match. This edge case, as well as a few others, will be fixed in future updates, *hopefully*. For now, Apollonator will look for Jane Johnson only in this case.
-
-## Error Handling
-
-- If the program reaches your daily API limit it will give an ERR: API limit reached. Please try again later.
