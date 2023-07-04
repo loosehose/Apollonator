@@ -31,11 +31,26 @@ apollonator:
 Replace "YOUR_API_KEY" with your Apollo.io API key and "YOUR_ORGANIZATION_NAME" with your organization name. Set the email and title fields to true or false depending on whether you want to extract email or title respectively. Apollo can also give you phone numbers. Originally, I added this; however, it usually just returns the company phone number... which is kinda useless.
 
 ## Usage
+```
+./apollonator -h                                                                       
+
+        Holy OSINT, Apollonator! 
+        author: github.com/loosehose
+
+Usage of ./apollonator:
+  -c string
+        Import the config.yml file with updated information.
+  -e    Save the results to an excel file.
+  -n string
+        Input a list of names.
+  -s int
+        Specify sleep delay in seconds. (default 18)
+```
 
 You can run the program with the following command:
 
 ```
-./Apollonator -n /path/to/users.txt -c ./config -e
+./apollonator -n /path/to/users.txt -c ./config -e
 ```
 
 The `-c` or `--config` option specifies the configuration file.
