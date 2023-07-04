@@ -1,4 +1,4 @@
-package apollonator
+package namesfile
 
 import (
 	"io/ioutil"
