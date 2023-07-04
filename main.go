@@ -35,13 +35,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	apollonator, err := config.ParseYaml(*configFile)
+	apollonator, err := pkg.ParseYaml(*configFile)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse YAML config")
 		os.Exit(1)
 	}
 
-	names, err := file.GetNamesFromFile(*namesFile)
+	names, err := pkg.GetNamesFromFile(*namesFile)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to read names file")
 		os.Exit(1)
@@ -49,7 +49,7 @@ func main() {
 
 	log.Info().Msgf("Estimated completion time: %d minutes", len(names)**sleep/60)
 
-	var personData []excel.PersonData
+	var personData []pkg.PersonData
 
 	for _, line := range names {
 		nameParts := strings.Fields(line)
@@ -64,7 +64,7 @@ func main() {
 			continue
 		}
 
-		response, err := requester.ApolloRequester(apollonator.APIKey, firstName, lastName, apollonator.Organization, time.Duration(*sleep)*time.Second)
+		response, err := pkg.ApolloRequester(apollonator.APIKey, firstName, lastName, apollonator.Organization, time.Duration(*sleep)*time.Second)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to get a response from Apollo")
 			continue
@@ -80,7 +80,7 @@ func main() {
 			domain = domainParts[1]
 		}
 
-		personData = append(personData, excel.PersonData{
+		personData = append(personData, pkg.PersonData{
 			FirstName:    firstName,
 			LastName:     lastName,
 			Organization: apollonator.Organization,
@@ -93,7 +93,7 @@ func main() {
 	}
 
 	if *excelFlag {
-		err := excel.SaveToExcel(personData, apollonator.Organization)
+		err := pkg.SaveToExcel(personData, apollonator.Organization)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to save Excel file")
 			os.Exit(1)
