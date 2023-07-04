@@ -65,4 +65,4 @@ Let's say you have a user named Jane Smith Johnson. While this name may be withi
 
 ## Error Handling
 
-- If the program reaches your daily API limit it will error out.
+- If the program reaches your daily API limit it will give an ERR: API limit reached. Please try again later.
