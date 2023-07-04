@@ -12,7 +12,7 @@ import (
 
 	"github.com/loosehose/apollonator/pkg/config"
 	"github.com/loosehose/apollonator/pkg/excel"
-	"github.com/loosehose/apollonator/pkg/namesfile"
+	"github.com/loosehose/apollonator/pkg/file"
 	"github.com/loosehose/apollonator/pkg/requester"
 )
 
