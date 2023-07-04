@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -13,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/akamensky/argparse"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/tealeg/xlsx"
@@ -173,19 +173,44 @@ func GetNamesFromFile(namesFile string) ([]string, error) {
 }
 
 func main() {
-	fmt.Println(`
-	Holy OSINT, Apollonator! 
+	fmt.Println(`                  
+                   =@@#                 
+                  +@@@@%.               
+                 *@@@@@@@:   .....      
+                #@@@@@@@@@-  :---       
+              .%@@@@@@@@@@@=  ::        
+             :@@@@@@-.%@@@@@*           
+            -@@@@@@:   *@@@@@#          
+           =@@@@@%.  -  +@@@@@#         
+          *@@@@@#  .#@*  =@@@@@%:       
+         #@@@@@*  .%@@@%. :@@@@@@-      
+       .%@@@@@=  :@@@@@@:  .%@@@@@=     
+      .%@@@@@-  -@@@@@@:     #@@@@@+    
+     -@@@@@@:  =@@@@@%.       #@@@@@#   
+    =@@@@@%.  +@@@@@#          *@@@@@%. 
+   +@@@@@@+=*@@@@@@*            =@@@@@%.
+  *@@@@@@@@@@@@@@@+              -@@@@@%
+ #@@@@@@@@@@@@@%+.                :@@@@% (pollonator)
+
+
 	author: github.com/loosehose
 	`)
 
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
-	configFile := flag.String("c", "", "Import the config.yml file with updated information.")
-	excel := flag.Bool("e", false, "Save the results to an excel file.")
-	namesFile := flag.String("n", "", "Input a list of names.")
-	sleep := flag.Int("s", defaultSleepDelay, "Specify sleep delay in seconds.")
-	flag.Parse()
+	parser := argparse.NewParser("apollonator", "")
+
+	configFile := parser.String("c", "config", &argparse.Options{Required: true, Help: "Import the config.yml file with updated information."})
+	excel := parser.Flag("e", "excel", &argparse.Options{Help: "Save the results to an excel file."})
+	namesFile := parser.String("n", "names", &argparse.Options{Help: "Input a list of names."})
+	sleep := parser.Int("s", "sleep", &argparse.Options{Default: defaultSleepDelay, Help: "Specify sleep delay in seconds."})
+
+	err := parser.Parse(os.Args)
+	if err != nil {
+		fmt.Print(parser.Usage(err))
+		os.Exit(1)
+	}
 
 	if *configFile == "" {
 		log.Error().Msg("Specify an input file [config.yml] with -c")
