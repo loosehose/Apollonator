@@ -1,4 +1,4 @@
-package apollonator
+package excel
 
 import (
 	"fmt"
