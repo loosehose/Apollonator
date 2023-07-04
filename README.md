@@ -50,7 +50,7 @@ Usage of ./apollonator:
 You can run the program with the following command:
 
 ```
-./apollonator -n /path/to/users.txt -c ./config -e
+./apollonator -n /path/to/users.txt -c ./config.yml -e
 ```
 
 The `-c` or `--config` option specifies the configuration file.
