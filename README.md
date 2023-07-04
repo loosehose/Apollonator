@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/loosehose/Apollonator/assets/75705022/e20cb22e-9822-42e0-bb37-b7e73651b2be" />
+  <img src="https://user-images.githubusercontent.com/75705022/250726305-e20cb22e-9822-42e0-bb37-b7e73651b2be.png" />
 </p>
 
 Apollonator is a Golang utility that sends requests to the Apollo.io API to retrieve person's email and title. It reads the person's name and organization from a text file and returns the extracted email and title. The purpose of this tool is to enumerate target email addresses without having to touch their infrastructure. 
