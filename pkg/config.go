@@ -1,4 +1,4 @@
-package apollonator
+package config
 
 import (
 	"errors"
