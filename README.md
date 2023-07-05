@@ -25,6 +25,7 @@ apollonator:
   title: true
 ```
 *Note: sometimes you really need to use that searching mechanic on Apollo because the organization name may be slightly different than anticipated.*
+
 Replace "YOUR_API_KEY" with your Apollo.io API key and "YOUR_ORGANIZATION_NAME" with your organization's exact name. Set the email and title fields to true or false based on your requirements.
 
 ## Usage
