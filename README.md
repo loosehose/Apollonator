@@ -15,12 +15,16 @@ go build
 ```
 
 ## Configuration
-Before running the program, acquire your [apollo.io API key](https://developer.apollo.io/keys/) and specify your organization name in the config.yml file.
+Before running the program, acquire your [apollo.io API key](https://developer.apollo.io/keys/) and specify your organization name in the config.yml file. You can create as many accounts as you want for free and add multiple API keys in the config.yml file. Apollonator will adjust the default sleep based on this.
 
 ```yaml
 apollonator:
-  api_key: "YOUR_API_KEY"
-  organization: "YOUR_ORGANIZATION_NAME"
+  api_keys:
+    - "FirstAPIKey"
+    - "SecondAPIKey"
+    - "ThirdAPIKey"
+    # Add more keys as needed
+  organization: "Github"
   email: true
   title: true
 ```
@@ -77,7 +81,7 @@ You can run the program with the following command:
 The `-c` or `--config` option specifies the configuration file.
 The `-n` or `--names` option specifies the text file that contains the list of names to be looked up. Each line of the file should contain a first and last name separated by a space.
 If you want the results saved in an Excel file, add the `-e` or `--excel option`.
-The `-s` or `--sleep` option specifies the delay between each request. 18 is the default. You probably shouldn't change this number or Apollo will get mad at u!!1!1
+The `-s` or `--sleep` option specifies the delay between each request. 18 is the default. You probably shouldn't change this number or Apollo's API will put you in time out. If you use multiple API keys from different accounts (wink wink), the default sleep will be adjusted. For instance, if you have two API keys, the sleep will default to 9 seconds.
 
 ## Output
 
