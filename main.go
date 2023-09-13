@@ -26,11 +26,13 @@ const (
 	outputExcelFile   = "apollonator.xlsx"
 )
 
+var apiKeyIndex int
+
 type Config struct {
-	APIKey       string `yaml:"api_key"`
-	Organization string `yaml:"organization"`
-	Email        bool   `yaml:"email"`
-	Title        bool   `yaml:"title"`
+	APIKeys      []string `yaml:"api_keys"`
+	Organization string   `yaml:"organization"`
+	Email        bool     `yaml:"email"`
+	Title        bool     `yaml:"title"`
 }
 
 type ApolloRequest struct {
@@ -56,7 +58,6 @@ type PersonData struct {
 	Title        string
 }
 
-// ParseYaml reads and parses a YAML configuration file
 func ParseYaml(configFile string) (Config, error) {
 	config := struct {
 		Apollonator Config `yaml:"apollonator"`
@@ -72,9 +73,8 @@ func ParseYaml(configFile string) (Config, error) {
 		return Config{}, err
 	}
 
-	// Validate Configurations
-	if config.Apollonator.APIKey == "" {
-		return Config{}, errors.New("missing API key in the configuration")
+	if len(config.Apollonator.APIKeys) == 0 {
+		return Config{}, errors.New("missing API keys in the configuration")
 	}
 
 	if config.Apollonator.Organization == "" {
@@ -84,10 +84,17 @@ func ParseYaml(configFile string) (Config, error) {
 	return config.Apollonator, nil
 }
 
-// ApolloRequester sends a request to Apollo API and returns the response
-func ApolloRequester(apollonator Config, firstName string, lastName string, delay time.Duration) (ApolloResponse, error) {
+func ApolloRequester(apollonator *Config, firstName string, lastName string, delay time.Duration, apiKeyIndex int) (ApolloResponse, error) {
+	// Check if there are any API keys left
+	if len(apollonator.APIKeys) == 0 {
+		return ApolloResponse{}, errors.New("All API keys are out of gas! Exiting.")
+	}
+
+	// Rotate the API key index
+	apiKeyIndex = (apiKeyIndex + 1) % len(apollonator.APIKeys)
+
 	payload := ApolloRequest{
-		APIKey:           apollonator.APIKey,
+		APIKey:           apollonator.APIKeys[apiKeyIndex],
 		FirstName:        firstName,
 		LastName:         lastName,
 		OrganizationName: apollonator.Organization,
@@ -114,7 +121,23 @@ func ApolloRequester(apollonator Config, firstName string, lastName string, dela
 
 	if resp.StatusCode == 429 {
 		log.Error().Msg("API limit reached. Please try again later.")
-		os.Exit(1)
+		return ApolloResponse{}, errors.New("API limit reached")
+	}
+
+	if resp.StatusCode == 422 {
+		log.Error().Msgf("API key %s is out of gas! Removing it.", apollonator.APIKeys[apiKeyIndex])
+
+		// Remove the malfunctioning API key from the list
+		apollonator.APIKeys = append(apollonator.APIKeys[:apiKeyIndex], apollonator.APIKeys[apiKeyIndex+1:]...)
+
+		// Adjust the delay based on the new number of API keys and notify the user
+		if len(apollonator.APIKeys) > 0 {
+			delay = (18 * time.Second) / time.Duration(len(apollonator.APIKeys))
+			log.Warn().Msgf("API key removed. Adjusting delay to %s based on the number of available API keys.", delay)
+		}
+
+		// Try the request with the next valid API key without modifying the apiKeyIndex since the list has shifted
+		return ApolloRequester(apollonator, firstName, lastName, delay, apiKeyIndex)
 	}
 
 	if resp.StatusCode != http.StatusOK {
@@ -137,10 +160,19 @@ func ApolloRequester(apollonator Config, firstName string, lastName string, dela
 	return result, nil
 }
 
-// SaveToExcel saves the collected person data into an Excel file
-func SaveToExcel(personData []PersonData, organization string) error {
+// Update SaveToExcel to accept a file name
+func SaveToExcel(personData []PersonData, filename string) error {
 	file := xlsx.NewFile()
 	sheet, _ := file.AddSheet("Employee Info")
+
+	// Adding headers
+	headerRow := sheet.AddRow()
+	headerRow.AddCell().Value = "First Name"
+	headerRow.AddCell().Value = "Last Name"
+	headerRow.AddCell().Value = "Organization"
+	headerRow.AddCell().Value = "Email"
+	headerRow.AddCell().Value = "Domain"
+	headerRow.AddCell().Value = "Title"
 
 	for _, data := range personData {
 		row := sheet.AddRow()
@@ -152,12 +184,7 @@ func SaveToExcel(personData []PersonData, organization string) error {
 		row.AddCell().Value = data.Title
 	}
 
-	// Using regex for edge cases such as O'Reilly
-	re := regexp.MustCompile("[^a-zA-Z0-9_]+")
-	safeOrganizationName := re.ReplaceAllString(organization, "")
-	outputFile := fmt.Sprintf("apollonator_%s.xlsx", strings.ToLower(safeOrganizationName))
-
-	err := file.Save(outputFile)
+	err := file.Save(filename)
 	if err != nil {
 		return err
 	}
@@ -165,7 +192,6 @@ func SaveToExcel(personData []PersonData, organization string) error {
 	return nil
 }
 
-// GetNamesFromFile reads the input names file and returns a slice of names
 func GetNamesFromFile(namesFile string) ([]string, error) {
 	namesData, err := ioutil.ReadFile(namesFile)
 	if err != nil {
@@ -203,20 +229,14 @@ func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
 	parser := argparse.NewParser("apollonator", "")
-
 	configFile := parser.String("c", "config", &argparse.Options{Required: true, Help: "Import the config.yml file with updated information."})
-	excel := parser.Flag("e", "excel", &argparse.Options{Help: "Save the results to an excel file."})
 	namesFile := parser.String("n", "names", &argparse.Options{Required: true, Help: "Input a list of names."})
-	sleep := parser.Int("s", "sleep", &argparse.Options{Default: defaultSleepDelay, Help: "Specify sleep delay in seconds."})
+	sleep := parser.Int("s", "sleep", &argparse.Options{Default: defaultSleepDelay, Help: "Specify sleep delay in seconds. Recommended: 18 seconds per API key."})
+	excelPath := parser.String("e", "excel", &argparse.Options{Help: "Specify the path and name of the excel file. If only -e is provided without a value, the default naming convention will be used."})
 
 	err := parser.Parse(os.Args)
 	if err != nil {
 		fmt.Print(parser.Usage(err))
-		os.Exit(1)
-	}
-
-	if *configFile == "" {
-		log.Error().Msg("Specify an input file [config.yml] with -c")
 		os.Exit(1)
 	}
 
@@ -230,6 +250,15 @@ func main() {
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to read names file")
 		os.Exit(1)
+	}
+
+	// Determine the Excel file name and path
+	var excelFile string
+	if *excelPath != "" {
+		excelFile = *excelPath
+	} else {
+		re := regexp.MustCompile("[^a-zA-Z0-9_]+")
+		excelFile = fmt.Sprintf("apollonator_%s.xlsx", strings.ToLower(re.ReplaceAllString(apollonator.Organization, "")))
 	}
 
 	log.Info().Msgf("Estimated completion time: %d minutes", len(names)**sleep/60)
@@ -249,8 +278,15 @@ func main() {
 			continue
 		}
 
-		response, err := ApolloRequester(apollonator, firstName, lastName, time.Duration(*sleep)*time.Second)
+		response, err := ApolloRequester(&apollonator, firstName, lastName, time.Duration(*sleep)*time.Second, apiKeyIndex)
 		if err != nil {
+			if err.Error() == "API limit reached" && excelFile != "" {
+				err := SaveToExcel(personData, excelFile)
+				if err != nil {
+					log.Error().Err(err).Msg("Failed to save Excel file")
+				}
+				os.Exit(1)
+			}
 			log.Error().Err(err).Msg("Failed to get a response from Apollo")
 			continue
 		}
@@ -275,11 +311,10 @@ func main() {
 		})
 
 		log.Info().Msgf("%s %s %s", firstName, lastName, response.Person.Email)
-		// fmt.Printf("%s %s %s", firstName, lastName, response.Person.Email)
 	}
 
-	if *excel {
-		err := SaveToExcel(personData, apollonator.Organization)
+	if excelFile != "" {
+		err := SaveToExcel(personData, excelFile)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to save Excel file")
 			os.Exit(1)
