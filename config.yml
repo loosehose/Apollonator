@@ -1,5 +1,9 @@
 apollonator:
-  api_key: "CHANGEME"
-  organization: "CHANGEME"
+  api_keys:
+    - "FirstAPIKey"
+    - "SecondAPIKey"
+    - "ThirdAPIKey"
+    # Add more keys as needed
+  organization: "Github"
   email: true
   title: true
